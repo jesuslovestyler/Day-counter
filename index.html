@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Day Counter</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #fdf6ec;
+        --bg-soft: #f7ecd9;
+        --card: #fffaf1;
+        --ink: #33241a;
+        --ink-soft: #6b5540;
+        --accent: #b4551f;
+        --accent-ink: #ffffff;
+        --accent-soft: #f3ddc4;
+        --line: #e3d2b8;
+        --hero-num: #9a3f14;
+        --shadow: 0 2px 10px rgba(120, 72, 20, 0.10);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #221812;
+          --bg-soft: #2a1e15;
+          --card: #2e2118;
+          --ink: #f3e6d4;
+          --ink-soft: #c4a988;
+          --accent: #e07f3e;
+          --accent-ink: #2a1708;
+          --accent-soft: #4a2f1c;
+          --line: #4d3826;
+          --hero-num: #f0a35e;
+          --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.5;
+      }
+      main {
+        max-width: 560px;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+      }
+      h1 {
+        font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 6px;
+        letter-spacing: -0.01em;
+      }
+      .intro {
+        margin: 0 0 26px;
+        color: var(--ink-soft);
+        font-size: 1.05rem;
+      }
+      label.field-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+      }
+      input[type="date"] {
+        width: 100%;
+        font: inherit;
+        font-size: 1.25rem;
+        padding: 14px 16px;
+        min-height: 56px;
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        background: var(--card);
+        color: var(--ink);
+        box-shadow: var(--shadow);
+      }
+      input[type="date"]:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 14px 0 28px;
+      }
+      .chip {
+        font: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        min-height: 48px;
+        padding: 10px 20px;
+        border-radius: 999px;
+        border: 2px solid var(--accent);
+        background: var(--accent-soft);
+        color: var(--ink);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .chip:active { background: var(--accent); color: var(--accent-ink); }
+      .hero {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 26px 22px 22px;
+        text-align: center;
+        margin-bottom: 22px;
+      }
+      .hero .chosen-date {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0 0 10px;
+      }
+      .hero .big {
+        font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+        font-size: 4.6rem;
+        line-height: 1.05;
+        font-weight: 700;
+        color: var(--hero-num);
+        margin: 0;
+      }
+      .hero .big-label {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin: 4px 0 0;
+      }
+      .hero .today-note {
+        font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+        font-size: 2.1rem;
+        line-height: 1.2;
+        font-weight: 700;
+        color: var(--hero-num);
+        margin: 6px 0 2px;
+      }
+      .hero .today-sub {
+        color: var(--ink-soft);
+        margin: 6px 0 0;
+      }
+      .breakdown {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 8px 22px;
+      }
+      .breakdown h2 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin: 16px 0 4px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        padding: 13px 0;
+        border-top: 1px solid var(--line);
+      }
+      .row:first-of-type { border-top: none; }
+      .row .k { color: var(--ink-soft); font-size: 1rem; }
+      .row .v { font-weight: 700; font-size: 1.05rem; text-align: right; }
+      footer {
+        margin-top: 34px;
+        text-align: center;
+        color: var(--ink-soft);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Day Counter</h1>
+      <p class="intro">Pick any date and see how many days until it — or how many days since.</p>
+
+      <label class="field-label" for="dateInput">Choose a date</label>
+      <input type="date" id="dateInput" />
+
+      <div class="chips">
+        <button type="button" class="chip" id="chipChristmas">Christmas</button>
+        <button type="button" class="chip" id="chipNewYear">New Year</button>
+        <button type="button" class="chip" id="chipToday">Today</button>
+      </div>
+
+      <section class="hero" aria-live="polite">
+        <p class="chosen-date" id="chosenDate">—</p>
+        <div id="heroResult"></div>
+      </section>
+
+      <section class="breakdown" id="breakdown" aria-live="polite">
+        <h2>Breakdown</h2>
+        <div class="row"><span class="k">Total days</span><span class="v" id="bdTotal">—</span></div>
+        <div class="row"><span class="k">In weeks</span><span class="v" id="bdWeeks">—</span></div>
+        <div class="row"><span class="k">In years, months &amp; days</span><span class="v" id="bdCal">—</span></div>
+      </section>
+
+      <footer>Made by Noki for Tyler. Public domain — share freely.</footer>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var input = document.getElementById("dateInput");
+        var chosenDateEl = document.getElementById("chosenDate");
+        var heroEl = document.getElementById("heroResult");
+        var bdTotal = document.getElementById("bdTotal");
+        var bdWeeks = document.getElementById("bdWeeks");
+        var bdCal = document.getElementById("bdCal");
+
+        // ---- Calendar-date helpers (pure y/m/d math, no clock, no DST) ----
+
+        function todayParts() {
+          var now = new Date();
+          return { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() };
+        }
+
+        // Serial day number via UTC — differences are exact whole days.
+        function serial(p) {
+          return Math.round(Date.UTC(p.y, p.m - 1, p.d) / 86400000);
+        }
+
+        function cmp(a, b) {
+          return serial(a) - serial(b);
+        }
+
+        function daysInMonth(y, m) {
+          return new Date(y, m, 0).getDate();
+        }
+
+        function addMonths(p, n) {
+          var total = (p.y * 12 + (p.m - 1)) + n;
+          var y = Math.floor(total / 12);
+          var m = (total % 12) + 1;
+          var d = Math.min(p.d, daysInMonth(y, m));
+          return { y: y, m: m, d: d };
+        }
+
+        function addYears(p, n) {
+          return addMonths(p, n * 12);
+        }
+
+        // Calendar breakdown from earlier (a) to later (b), a <= b.
+        function calendarDiff(a, b) {
+          var years = b.y - a.y;
+          var base = addYears(a, years);
+          if (cmp(base, b) > 0) {
+            years--;
+            base = addYears(a, years);
+          }
+          var months = (b.y - base.y) * 12 + (b.m - base.m);
+          var afterYears = base;
+          base = addMonths(afterYears, months);
+          if (cmp(base, b) > 0) {
+            months--;
+            base = addMonths(afterYears, months);
+          }
+          var days = serial(b) - serial(base);
+          return { years: years, months: months, days: days };
+        }
+
+        function parseInput(value) {
+          var parts = value.split("-");
+          if (parts.length !== 3) return null;
+          var y = parseInt(parts[0], 10);
+          var m = parseInt(parts[1], 10);
+          var d = parseInt(parts[2], 10);
+          if (!y || !m || !d) return null;
+          if (m < 1 || m > 12 || d < 1 || d > daysInMonth(y, m)) return null;
+          return { y: y, m: m, d: d };
+        }
+
+        function toInputValue(p) {
+          function pad(n, w) {
+            var s = String(n);
+            while (s.length < w) s = "0" + s;
+            return s;
+          }
+          return pad(p.y, 4) + "-" + pad(p.m, 2) + "-" + pad(p.d, 2);
+        }
+
+        function formatLong(p) {
+          var dt = new Date(p.y, p.m - 1, p.d);
+          return dt.toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          });
+        }
+
+        function plural(n, word) {
+          return n + " " + word + (n === 1 ? "" : "s");
+        }
+
+        // ---- Rendering ----
+
+        function render() {
+          var picked = parseInput(input.value);
+          var today = todayParts();
+          if (!picked) {
+            chosenDateEl.textContent = "Pick a date above";
+            heroEl.innerHTML = "";
+            bdTotal.textContent = "—";
+            bdWeeks.textContent = "—";
+            bdCal.textContent = "—";
+            return;
+          }
+
+          chosenDateEl.textContent = formatLong(picked);
+
+          var diff = serial(picked) - serial(today); // + future, - past
+          var abs = Math.abs(diff);
+
+          if (diff === 0) {
+            heroEl.innerHTML =
+              '<p class="today-note">That is today.</p>' +
+              '<p class="today-sub">No waiting, no looking back — it is here.</p>';
+          } else if (diff > 0) {
+            heroEl.innerHTML =
+              '<p class="big">' + abs + '</p>' +
+              '<p class="big-label">' + (abs === 1 ? "day to go" : "days to go") + '</p>';
+          } else {
+            heroEl.innerHTML =
+              '<p class="big">' + abs + '</p>' +
+              '<p class="big-label">' + (abs === 1 ? "day ago" : "days ago") + '</p>';
+          }
+
+          bdTotal.textContent = plural(abs, "day");
+
+          var weeks = Math.floor(abs / 7);
+          var rem = abs % 7;
+          bdWeeks.textContent =
+            plural(weeks, "week") + (rem ? " and " + plural(rem, "day") : "");
+
+          var earlier = diff >= 0 ? today : picked;
+          var later = diff >= 0 ? picked : today;
+          var cd = calendarDiff(earlier, later);
+          var bits = [];
+          if (cd.years) bits.push(plural(cd.years, "year"));
+          if (cd.months) bits.push(plural(cd.months, "month"));
+          if (cd.days || bits.length === 0) bits.push(plural(cd.days, "day"));
+          bdCal.textContent = bits.join(", ");
+        }
+
+        function setDate(p) {
+          input.value = toInputValue(p);
+          render();
+        }
+
+        // ---- Presets ----
+
+        document.getElementById("chipChristmas").addEventListener("click", function () {
+          var t = todayParts();
+          var thisYear = { y: t.y, m: 12, d: 25 };
+          setDate(cmp(thisYear, t) >= 0 ? thisYear : { y: t.y + 1, m: 12, d: 25 });
+        });
+
+        document.getElementById("chipNewYear").addEventListener("click", function () {
+          var t = todayParts();
+          setDate({ y: t.y + 1, m: 1, d: 1 });
+        });
+
+        document.getElementById("chipToday").addEventListener("click", function () {
+          setDate(todayParts());
+        });
+
+        input.addEventListener("input", render);
+        input.addEventListener("change", render);
+
+        // Default to today, and refresh if the page stays open past midnight.
+        setDate(todayParts());
+        (function scheduleMidnightRefresh() {
+          var now = new Date();
+          var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+          setTimeout(function () {
+            render();
+            scheduleMidnightRefresh();
+          }, next - now);
+        })();
+      })();
+    </script>
+  </body>
+</html>
