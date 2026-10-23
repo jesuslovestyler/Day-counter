@@ -1,7 +1,8 @@
 # Day Counter
 
-Count the days between two dates, or find the date a certain number of days from today — for anniversaries, deadlines, and counting down to good days.
+A day counter: count the days between two dates, or how many days remain until a day you're waiting for.
 
 **Live:** https://jesuslovestyler.github.io/Day-counter/
+**Home:** https://jesuslovestyler.com/
 
-Built with Muse artifacts.
+One self-contained page: no account, no ads, nothing to buy. Released into the public domain (Unlicense — see LICENSE). Built by Tyler with Noki.
